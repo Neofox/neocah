@@ -1,10 +1,10 @@
 import {createStore, combineReducers, applyMiddleware, Action} from "redux";
 import thunkMiddleware, {ThunkAction} from "redux-thunk";
 import {composeWithDevTools} from "redux-devtools-extension";
-import {firestoreReducer} from "redux-firestore";
 
+import {firestoreReducer} from "redux-firestore";
+import {firebaseReducer} from "react-redux-firebase";
 import {systemReducer} from "./system/reducers";
-import {gameReducer} from "./game/reducers";
 
 export type ThunkType<ReturnType = void> = ThunkAction<ReturnType,
     {},
@@ -13,7 +13,7 @@ export type ThunkType<ReturnType = void> = ThunkAction<ReturnType,
 
 const rootReducer = combineReducers({
     system: systemReducer,
-    game: gameReducer,
+    firebase: firebaseReducer,
     firestore: firestoreReducer,
 });
 
