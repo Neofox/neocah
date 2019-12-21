@@ -1,4 +1,12 @@
-import {LOGIN_ERROR, LOGIN_SUCCESS, SIGNOUT_SUCCESS, SystemActionTypes, SystemState} from "./types";
+import {
+    SIGNIN_ERROR,
+    SIGNIN_SUCCESS,
+    SIGNOUT_SUCCESS,
+    SIGNUP_ERROR,
+    SIGNUP_SUCCESS,
+    SystemActionTypes,
+    SystemState
+} from "./types";
 
 const initialState: SystemState = {
     error: null
@@ -6,20 +14,20 @@ const initialState: SystemState = {
 
 export function systemReducer(state = initialState, action: SystemActionTypes): SystemState {
     switch (action.type) {
-        case LOGIN_SUCCESS: {
-            return {
-                ...state,
-                error: null
-            };
+        case SIGNIN_SUCCESS: {
+            return {...state, error: null};
         }
-        case LOGIN_ERROR: {
-            return {
-                ...state,
-                error: 'Login failed'
-            };
+        case SIGNIN_ERROR: {
+            return {...state, error: 'Login failed'};
         }
         case SIGNOUT_SUCCESS: {
-            return {...state,};
+            return {...state};
+        }
+        case SIGNUP_SUCCESS: {
+            return {...state, error: null};
+        }
+        case SIGNUP_ERROR: {
+            return {...state, error: action.payload.message};
         }
         default:
             return state;

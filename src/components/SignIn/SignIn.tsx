@@ -5,8 +5,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import {default as MUILink} from '@material-ui/core/Link';
+import {Link} from "react-router-dom";import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles, Theme} from '@material-ui/core/styles';
@@ -41,7 +41,7 @@ const SignIn = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const loginError = useSelector((state: RootState) => state.system.error);
+    const signinError = useSelector((state: RootState) => state.system.error);
     const auth = useSelector((state: any) => state.firebase.auth);
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +50,6 @@ const SignIn = () => {
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
     };
-
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         dispatch(signIn({email, password}))
@@ -79,7 +78,7 @@ const SignIn = () => {
                         autoFocus
                         value={email}
                         onChange={handleEmailChange}
-                        error={!!loginError}
+                        error={!!signinError}
                     />
                     <TextField
                         variant="outlined"
@@ -93,31 +92,31 @@ const SignIn = () => {
                         autoComplete="current-password"
                         value={password}
                         onChange={handlePasswordChange}
-                        error={!!loginError}
+                        error={!!signinError}
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
                         label="Remember me"
                     />
-                    <Button type="submit" fullWidth variant="contained" color="primary">
+                    <Button type="submit" className={classes.submit} fullWidth variant="contained" color="primary">
                         Sign In
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
+                            <MUILink href="#" variant="body2">
                                 Forgot password?
-                            </Link>
+                            </MUILink>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
+                            <MUILink component={Link} to={"/sign-up"} variant="body2">
+                                Don't have an account? Sign up
+                            </MUILink>
                         </Grid>
                     </Grid>
                 </form>
             </div>
         </Container>
     );
-}
+};
 
 export default SignIn;
