@@ -1,31 +1,25 @@
-import {LOG_IN, LOG_OUT, SystemActionTypes, SystemState, UPDATE_USER} from "./types";
+import {LOGIN_ERROR, LOGIN_SUCCESS, SIGNOUT_SUCCESS, SystemActionTypes, SystemState} from "./types";
 
 const initialState: SystemState = {
-    loggedIn: false,
-    user: undefined,
+    error: null
 };
 
 export function systemReducer(state = initialState, action: SystemActionTypes): SystemState {
     switch (action.type) {
-        case LOG_IN: {
+        case LOGIN_SUCCESS: {
             return {
                 ...state,
-                loggedIn: true,
-                user: action.payload
+                error: null
             };
         }
-        case LOG_OUT: {
+        case LOGIN_ERROR: {
             return {
                 ...state,
-                loggedIn: false,
-                user: undefined
+                error: 'Login failed'
             };
         }
-        case UPDATE_USER: {
-            return {
-                ...state,
-                user: action.payload
-            };
+        case SIGNOUT_SUCCESS: {
+            return {...state,};
         }
         default:
             return state;

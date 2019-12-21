@@ -4,8 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import PlayerList from "./PlayerList";
 import BlackCardDisplay from "./BlackCardDisplay";
 import PlayedCards from "./PlayedCards";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const TzarBoard: React.FC = () => {
+    const auth = useSelector((state: any) => state.firebase.auth);
+    if (!auth.uid) {return <Redirect to={"/sign-in"} />}
+
     return (
         <Container>
             <Grid container>

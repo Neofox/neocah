@@ -9,6 +9,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import {AccountCircle} from "@material-ui/icons";
 import Menu from "@material-ui/core/Menu";
 import {Link} from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import {useDispatch, useSelector} from "react-redux";
+import {signOut} from "../store/system/actions";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,7 +29,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Appbar = () => {
     const classes = useStyles();
-    const [auth, setAuth] = React.useState(true);
+    const dispatch = useDispatch();
+    const auth = useSelector((state: any) => state.firebase.auth);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -36,6 +40,10 @@ const Appbar = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleSignOut = () => {
+        setAnchorEl(null);
+        dispatch(signOut())
     };
 
     return (
@@ -48,15 +56,9 @@ const Appbar = () => {
                     <Typography variant="h6" className={classes.title}>
                         Cards Against Humanity (Beta)
                     </Typography>
-                    {auth && (
+                    {auth.uid ? (
                         <div>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleMenu}
-                                color="inherit"
-                            >
+                            <IconButton aria-haspopup="true" onClick={handleMenu} color="inherit">
                                 <AccountCircle/>
                             </IconButton>
                             <Menu
@@ -75,8 +77,11 @@ const Appbar = () => {
                                 onClose={handleClose}
                             >
                                 <MenuItem component={Link} to={"/favorites"} onClick={handleClose}>Favorites</MenuItem>
+                                <MenuItem component={Link} to={"/sign-in"} onClick={handleSignOut}>Sign Out</MenuItem>
                             </Menu>
                         </div>
+                    ) : (
+                        <Button component={Link} to={"/sign-in"} color="inherit">Login</Button>
                     )}
                 </Toolbar>
             </AppBar>

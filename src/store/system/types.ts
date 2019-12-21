@@ -1,26 +1,29 @@
-export interface SystemState {
-    loggedIn: boolean;
-    user: UserType | undefined;
-}
-export interface UserType {
-    name: string;
-    inGame: boolean|string;
+import {ThunkAction} from "redux-thunk";
+
+export type ThunkType<ReturnType = void> = ThunkAction<ReturnType,
+    SystemState,
+    { getFirebase: any },
+    SystemActionTypes>
+
+export interface CredentialsType {
+    email: string,
+    password: string
 }
 
-export const LOG_IN = "LOG_IN";
-export const LOG_OUT = "LOG_OUT";
+export interface SystemState {
+    error: string | null;
+}
+
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_ERROR = "LOGIN_ERROR";
+export const SIGNOUT_SUCCESS = "SIGNOUT_SUCCESS";
 export const UPDATE_USER = "UPDATE_USER";
 
-interface LogInAction {
-    type: typeof LOG_IN;
-    payload: UserType;
+interface SignInInAction {
+    type: typeof LOGIN_SUCCESS | typeof LOGIN_ERROR;
 }
-interface LogOutAction {
-    type: typeof LOG_OUT;
-}
-interface UpdateUserAction {
-    type: typeof UPDATE_USER;
-    payload: UserType;
+interface SignOutAction {
+    type: typeof SIGNOUT_SUCCESS;
 }
 
-export type SystemActionTypes = LogInAction | LogOutAction | UpdateUserAction;
+export type SystemActionTypes = SignInInAction | SignOutAction;

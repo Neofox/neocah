@@ -15,6 +15,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import {green} from "@material-ui/core/colors";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
     layout: {
@@ -77,12 +78,12 @@ const Favorites = () => {
     const [deckId, setDeckId] = React.useState<string>('');
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
+    const auth = useSelector((state: any) => state.firebase.auth);
+    const decks: DeckType[] = useSelector((state: RootState) => state.firestore.ordered.decks) || [];
 
     useFirestoreConnect([
         {collection: 'decks'}
     ]);
-
-    const decks: DeckType[] = useSelector((state: RootState) => state.firestore.ordered.decks) || [];
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDeckId(event.target.value);
@@ -98,6 +99,8 @@ const Favorites = () => {
             })
         })
     };
+
+    if (!auth.uid) {return <Redirect to={"/sign-in"} />}
 
     return (
         <main className={classes.layout}>

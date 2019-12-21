@@ -11,6 +11,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles, Theme} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
     paper: {
@@ -34,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const SignUp = () => {
     const classes = useStyles();
+    const auth = useSelector((state: any) => state.firebase.auth);
+
+    if (auth.uid) {return <Redirect to={"/"} />}
 
     return (
         <Container component="main" maxWidth="xs">

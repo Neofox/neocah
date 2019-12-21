@@ -1,5 +1,4 @@
 // Describing the shape of the system's slice of state
-import {UserType} from "../system/types";
 import {DeckType} from "../../utils/types";
 
 export interface GameType {
@@ -7,7 +6,7 @@ export interface GameType {
     maxScore: number,
     decks: DeckType[],
     password: string|undefined,
-    players: UserType[]
+    players: []
 }
 
 export interface GameState {

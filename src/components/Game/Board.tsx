@@ -5,8 +5,13 @@ import PlayerList from "./PlayerList";
 import Hand from "./Hand";
 import BlackCardDisplay from "./BlackCardDisplay";
 import PlayerScore from "./PlayerScore";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const Board: React.FC = () => {
+    const auth = useSelector((state: any) => state.firebase.auth);
+    if (!auth.uid) {return <Redirect to={"/sign-in"} />}
+
     return (
         <Container>
             <Grid container>

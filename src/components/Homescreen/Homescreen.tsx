@@ -6,6 +6,8 @@ import JoinGameForm from "./JoinGameForm";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+import {Redirect} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -27,6 +29,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Homescreen: React.FC = () => {
     const classes = useStyles();
+    const auth = useSelector((state: any) => state.firebase.auth);
+    if (!auth.uid) {return <Redirect to={"/sign-in"} />}
 
     return (
         <Container>

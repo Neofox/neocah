@@ -1,5 +1,4 @@
-import React, {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
+import React from 'react';
 import {CssBaseline} from "@material-ui/core";
 import {ThemeProvider} from "@material-ui/styles";
 import {BrowserRouter as Router, Route} from "react-router-dom";
@@ -8,22 +7,12 @@ import Appbar from './Appbar';
 import Homescreen from "./Homescreen/Homescreen";
 import Board from './Game/Board';
 import TzarBoard from './Game/TzarBoard';
-import {logIn} from "../store/system/actions";
 import SignIn from "./SignIn/SignIn";
 import SignUp from "./SignUp/SignUp";
 import Favorites from "./Favorites/Favorites";
 import Lobby from "./Lobby/Lobby";
 
 const App: React.FC = () => {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(logIn({
-            name: "Neofox",
-            inGame: false
-        }))
-    });
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>

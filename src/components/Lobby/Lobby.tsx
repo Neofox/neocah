@@ -11,6 +11,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Button from "@material-ui/core/Button";
 import {ListSubheader} from "@material-ui/core";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Lobby: React.FC = () => {
     const classes = useStyles();
+    const auth = useSelector((state: any) => state.firebase.auth);
+    if (!auth.uid) {return <Redirect to={"/sign-in"} />}
+
     return (
         <Container className={classes.root}>
             <Grid container>
