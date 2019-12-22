@@ -21,6 +21,14 @@ export interface DeckType {
     whiteCards: WhiteCardType[],
 }
 
+export interface GameType {
+    id: string,
+    maxScore: number,
+    decks: DeckType[],
+    password: string,
+    players: UserType[]
+}
+
 export interface UserType {
     name: string
 }

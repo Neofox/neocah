@@ -1,21 +1,22 @@
-import {FETCH_GAME, GameActionTypes, GameState, GameType, UPDATE_GAME} from "./types";
+import {GAME_CREATION_ERROR, GAME_CREATION_SUCCESS, GameActionTypes, GameState} from "./types";
 
 const initialState: GameState = {
-    games: []
+    game: null,
+    error: null
 };
-
 
 export function gameReducer(state = initialState, action: GameActionTypes): GameState {
     switch (action.type) {
-        case UPDATE_GAME: {
+        case GAME_CREATION_SUCCESS: {
             return {
                 ...state,
-                ...action.payload
+                game: action.payload
             };
         }
-        case FETCH_GAME: {
+        case GAME_CREATION_ERROR: {
             return {
                 ...state,
+                error: action.payload
             };
         }
         default:

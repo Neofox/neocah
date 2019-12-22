@@ -10,7 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import {useSelector} from "react-redux";
 import {useFirestoreConnect, isLoaded} from "react-redux-firebase";
 import {RootState} from "../../store";
-import {GameType} from "../../store/game/types";
+import {GameType} from "../../utils/types";
 
 interface Column {
     id: 'id' | 'maxScore' | 'password';

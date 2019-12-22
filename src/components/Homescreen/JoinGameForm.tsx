@@ -3,7 +3,7 @@ import {createStyles, Theme, makeStyles} from "@material-ui/core/styles";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store";
 import {useFirestoreConnect} from "react-redux-firebase";
-import {GameType} from "../../store/game/types";
+import {GameType} from "../../utils/types";
 import {useHistory} from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";

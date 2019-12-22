@@ -1,10 +1,8 @@
 import React, { useState} from 'react';
-import shortid from 'shortid';
-import {useFirestore, useFirestoreConnect} from 'react-redux-firebase'
+import {useFirestoreConnect} from 'react-redux-firebase'
 import {createStyles, Theme, makeStyles} from "@material-ui/core/styles";
-import {GameType} from "../../store/game/types";
 import {DeckType} from "../../utils/types";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store";
 import { useHistory } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
@@ -18,6 +16,8 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
+import {createGame} from "../../store/game/actions";
+import {ThunkDispatchType} from "../../store/game/types";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const CreateGameForm: React.FC = () => {
     const classes = useStyles();
-    const firestore = useFirestore();
+    const dispatch = useDispatch<ThunkDispatchType>();
     const history = useHistory();
     const [deckName, setDeckName] = useState<string[]>([]);
     const [maxScore, setMaxScore] = useState<number>(10);
@@ -80,13 +80,12 @@ const CreateGameForm: React.FC = () => {
         setPassword(event.target.value);
     };
 
-    const createGame = ()  => {
+    const create = () => {
         const deckList: DeckType[] = decks.filter((deck: DeckType) => deckName.includes(deck.name));
-        const id = shortid.generate().toUpperCase();
-        const game: GameType = { id, maxScore, password, decks: deckList, players: [] };
-        firestore.add('games', game).then(() => {
-               history.push('/lobby')
-        })
+        //dispatch(testingPromise('hello')).then((res: string) => console.log(res));
+         dispatch(createGame({decks: deckList, maxScore, password})).then(() => {
+             history.push("lobby")
+         })
     };
 
     return (
@@ -123,11 +122,11 @@ const CreateGameForm: React.FC = () => {
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item lg={12} md={12} xs={12}>
+                <Grid item lg={12} md={12} xs={10}>
                     <TextField id="passwordCreate" name="passwordCreate" label="Password (not required)" type="password" fullWidth value={password} onChange={handlePasswordChange}/>
                 </Grid>
                 <Grid item lg={12} md={12} xs={12}>
-                    <Button variant="contained" color="primary" onClick={createGame} fullWidth>
+                    <Button variant="contained" color="primary" onClick={create} fullWidth>
                         Create the game
                     </Button>
                 </Grid>

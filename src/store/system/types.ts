@@ -1,7 +1,8 @@
 import {ThunkAction} from "redux-thunk";
+import {RootState} from "../index";
 
 export type ThunkType<ReturnType = void> = ThunkAction<ReturnType,
-    SystemState,
+    RootState,
     { getFirebase: any, getFirestore: any },
     SystemActionTypes>
 

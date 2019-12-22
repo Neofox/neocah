@@ -1,35 +1,27 @@
 // Describing the shape of the system's slice of state
-import {DeckType} from "../../utils/types";
+import {DeckType, GameType} from "../../utils/types";
+import {ThunkAction, ThunkDispatch} from "redux-thunk";
 
-export interface GameType {
-    id: string,
-    maxScore: number,
-    decks: DeckType[],
-    password: string|undefined,
-    players: []
-}
+export type ThunkType<ReturnType> = ThunkAction<ReturnType, any, { getFirebase: any, getFirestore: any }, GameActionTypes>
+export type ThunkDispatchType = ThunkDispatch<any, { getFirebase: any, getFirestore: any }, GameActionTypes>;
 
 export interface GameState {
-    games: GameType[]
+    game: GameType | null;
+    error: string | null
 }
 
-
-export const UPDATE_GAME = "UPDATE_GAME";
-export const FETCH_GAME = "FETCH_GAME";
-export const CREATE_GAME = "CREATE_GAME";
-
-interface UpdateGameAction {
-    type: typeof UPDATE_GAME;
-    payload: GameType
+export interface CreateGamePayload {
+    decks: DeckType[],
+    password: string,
+    maxScore: number
 }
+
+export const GAME_CREATION_SUCCESS = "GAME_CREATION_SUCCESS";
+export const GAME_CREATION_ERROR = "GAME_CREATION_ERROR";
 
 interface CreateGameAction {
-    type: typeof CREATE_GAME;
-    payload: GameType
+    type: typeof GAME_CREATION_SUCCESS | typeof GAME_CREATION_ERROR;
+    payload: any | GameType
 }
 
-interface FetchGameAction {
-    type: typeof FETCH_GAME;
-}
-
-export type GameActionTypes = UpdateGameAction | FetchGameAction;
+export type GameActionTypes = CreateGameAction;
