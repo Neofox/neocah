@@ -1,34 +1,54 @@
-import {GAME_CREATION_SUCCESS, GAME_CREATION_ERROR, CreateGamePayload, ThunkType} from "./types";
+import {GAME_JOIN_SUCCESS, GAME_JOIN_ERROR, CreateGamePayload, ThunkType, JoinGamePayload} from "./types";
 import shortid from "shortid";
 import {GameType} from "../../utils/types";
 
-export function createGame(newGame: CreateGamePayload): ThunkType<Promise<boolean>> {
+export function createGame(newGame: CreateGamePayload): ThunkType<Promise<any>> {
     return (dispatch, getState, {getFirebase}): Promise<boolean> => {
         const firestore = getFirebase().firestore();
 
-        const id = shortid.generate().toUpperCase();
+        const gameId = shortid.generate().toUpperCase();
         const userId = getState().firebase.auth.uid;
-        const currentUser = firestore.collection('users').doc(userId);
+        const game: GameType = {id: gameId, ...newGame, players: [userId] };
 
-        return currentUser.get().then(() => {
-            const game: GameType = {id, ...newGame, players: [currentUser] };
-
-            return firestore.collection('games').add(game)
-                .then(
-                () => {
-                    dispatch({
-                        type: GAME_CREATION_SUCCESS,
-                        payload: game
-                    });
+        return firestore.collection('games').doc(gameId).set(game)
+            .then(() => {
+                dispatch({
+                    type: GAME_JOIN_SUCCESS,
+                    payload: game
+                });
+            })
+            .catch((err: any) => {
+                dispatch({
+                    type: GAME_JOIN_ERROR,
+                    payload: err
                 })
-                .catch((err: any) => {
-                    dispatch({
-                        type: GAME_CREATION_ERROR,
-                        payload: err
-                    })
-                })
-        })
+            })
+    }
+}
 
+export function joinGame(joinGame: JoinGamePayload): ThunkType<Promise<any>> {
+    return (dispatch, getState, {getFirebase}): Promise<any> => {
+        const firestore = getFirebase().firestore();
+        const game: GameType = getState().firestore.data.games[joinGame.gameId];
 
+        if (!game || game.password !== joinGame.password) {
+            const error = "Invalid ID or password";
+            dispatch({
+                type: GAME_JOIN_ERROR,
+                payload: error
+            });
+            return Promise.resolve({error})
+        } else {
+            const userId = getState().firebase.auth.uid;
+            return firestore.collection('games').doc(joinGame.gameId).set({
+                players: [userId]
+            }, {merge: true}).then(() => {
+                dispatch({
+                    type: GAME_JOIN_SUCCESS,
+                    payload: game
+                });
+                return {error: null}
+            });
+        }
     }
 }

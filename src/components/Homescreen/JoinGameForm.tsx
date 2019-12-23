@@ -1,15 +1,14 @@
 import React, {useState} from 'react';
 import {createStyles, Theme, makeStyles} from "@material-ui/core/styles";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store";
-import {useFirestoreConnect} from "react-redux-firebase";
-import {GameType} from "../../utils/types";
+import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import {ThunkDispatchType} from "../../store/game/types";
+import {joinGame} from "../../store/game/actions";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const JoinGameForm: React.FC = () => {
     const classes = useStyles();
     const history = useHistory();
-    const games = useSelector((state: RootState) => state.firestore.ordered.games) || [];
+    const dispatch = useDispatch<ThunkDispatchType>();
     const [gameId, setGameId] = useState<string>("");
     const [gamePassword, setGamePassword] = useState<string>("");
     const [error, setError] = useState<{error: boolean, message: string}>({error: false, message: ""});
@@ -44,24 +43,15 @@ const JoinGameForm: React.FC = () => {
         setGamePassword(event.target.value);
     };
 
-    useFirestoreConnect([
-        {collection: 'games'}
-    ]);
-
-    const joinGame = () => {
-        const game = games.find((game: GameType) => game.id === gameId);
-
-        if (!game) {
-            setError({error: true, message: "Invalid ID or password"});
-            return;
-        }
-
-        if (game.password !== gamePassword) {
-            setError({error: true, message: "Invalid ID or password"});
-            return;
-        }
-
-        history.push("/lobby")
+    const joinGameHandler = () => {
+        dispatch(joinGame({gameId, password: gamePassword})).then(res => {
+            if (res.error !== null) {
+                setError({error: true, message: res.error});
+            } else {
+                setError({error: false, message: ""});
+                history.push("/lobby");
+            }
+        });
     };
 
     return (
@@ -82,7 +72,7 @@ const JoinGameForm: React.FC = () => {
                         />
                     </Grid>
                     <Grid item lg={12} md={12} xs={12}>
-                        <Button variant="contained" color="primary" onClick={joinGame} fullWidth>
+                        <Button variant="contained" color="primary" onClick={joinGameHandler} fullWidth>
                             Join the game
                         </Button>
                     </Grid>

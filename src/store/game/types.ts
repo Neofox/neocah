@@ -16,11 +16,16 @@ export interface CreateGamePayload {
     maxScore: number
 }
 
-export const GAME_CREATION_SUCCESS = "GAME_CREATION_SUCCESS";
-export const GAME_CREATION_ERROR = "GAME_CREATION_ERROR";
+export interface JoinGamePayload {
+    gameId: string,
+    password: string,
+}
+
+export const GAME_JOIN_SUCCESS = "GAME_JOIN_SUCCESS";
+export const GAME_JOIN_ERROR = "GAME_JOIN_ERROR";
 
 interface CreateGameAction {
-    type: typeof GAME_CREATION_SUCCESS | typeof GAME_CREATION_ERROR;
+    type: typeof GAME_JOIN_SUCCESS | typeof GAME_JOIN_ERROR;
     payload: any | GameType
 }
 

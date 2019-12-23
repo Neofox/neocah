@@ -26,7 +26,7 @@ export interface GameType {
     maxScore: number,
     decks: DeckType[],
     password: string,
-    players: UserType[]
+    players: string[]
 }
 
 export interface UserType {

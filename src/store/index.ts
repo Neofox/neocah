@@ -5,9 +5,11 @@ import {composeWithDevTools} from "redux-devtools-extension";
 import {firestoreReducer, getFirestore} from "redux-firestore";
 import {firebaseReducer, getFirebase} from "react-redux-firebase";
 import {systemReducer} from "./system/reducers";
+import {gameReducer} from "./game/reducers";
 
 const rootReducer = combineReducers({
     system: systemReducer,
+    game: gameReducer,
     firebase: firebaseReducer,
     firestore: firestoreReducer,
 });
