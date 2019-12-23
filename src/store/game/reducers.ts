@@ -1,25 +1,33 @@
-import {GAME_JOIN_ERROR, GAME_JOIN_SUCCESS, GameActionTypes, GameState} from "./types";
+import {
+    GAME_CREATION_ERROR,
+    GAME_JOIN_ERROR,
+    GAME_JOIN_SUCCESS,
+    GameActionTypes,
+    GameState,
+    QUIT_GAME,
+    TOGGLE_READY
+} from "./types";
 
 const initialState: GameState = {
-    game: null,
     error: null
 };
 
 export function gameReducer(state = initialState, action: GameActionTypes): GameState {
     switch (action.type) {
         case GAME_JOIN_SUCCESS: {
-            return {
-                ...state,
-                game: action.payload,
-                error: null
-            };
+            return {...state, error: null};
         }
         case GAME_JOIN_ERROR: {
-            return {
-                ...state,
-                game: null,
-                error: action.payload
-            };
+            return {...state, error: action.payload};
+        }
+        case GAME_CREATION_ERROR: {
+            return {...state, error: action.payload};
+        }
+        case QUIT_GAME: {
+            return {...state};
+        }
+        case TOGGLE_READY: {
+            return {...state};
         }
         default:
             return state;

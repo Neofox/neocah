@@ -8,7 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {useSelector} from "react-redux";
-import {useFirestoreConnect, isLoaded} from "react-redux-firebase";
+import {useFirestoreConnect, isLoaded, isEmpty} from "react-redux-firebase";
 import {RootState} from "../../store";
 import {GameType} from "../../utils/types";
 
@@ -47,23 +47,22 @@ const GameList = () => {
 
     const games = useSelector((state: RootState) => state.firestore.ordered.games);
 
-    const getBody = (games: GameType[]) => (
-        games.map((game: GameType) => {
-            if (game === undefined) return <TableRow/>;
-            return (
-                <TableRow hover tabIndex={-1} key={game.id}>
-                    {columns.map(column => {
-                        const value = game[column.id];
-                        return (
-                            <TableCell key={column.id}>
-                                {column.id === 'password' ? value ? 'Yes' : 'No' : value}
-                            </TableCell>
-                        );
-                    })}
-                </TableRow>
-            );
-        })
-    )
+    const getBody = (games: GameType[]) => {
+        if (isEmpty(games)) return <TableRow hover><TableCell>No games availables.</TableCell></TableRow>;
+
+        return games.map((game: GameType) => (
+            <TableRow hover tabIndex={-1} key={game.id}>
+                {columns.map(column => {
+                    const value = game[column.id];
+                    return (
+                        <TableCell key={column.id}>
+                            {column.id === 'password' ? value ? 'Yes' : 'No' : value}
+                        </TableCell>
+                    );
+                })}
+            </TableRow>
+        ));
+    }
 
     return (
         <Paper className={classes.root}>

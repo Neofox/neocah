@@ -26,9 +26,20 @@ export interface GameType {
     maxScore: number,
     decks: DeckType[],
     password: string,
-    players: string[]
+    players: PlayerType[],
+    status: 'in_progress' | 'in_lobby'
+}
+
+export interface PlayerType {
+    id: string,
+    name: string,
+    ready: boolean,
+    score: number
 }
 
 export interface UserType {
-    name: string
+    name: string,
+    ready: boolean,
+    currentGame: null | string,
+    favoriteDecks: null | DeckType[]
 }

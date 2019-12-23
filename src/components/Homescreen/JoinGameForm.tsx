@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import {ThunkDispatchType} from "../../store/game/types";
 import {joinGame} from "../../store/game/actions";
+import {useAsyncSetState} from "../../hooks/usestate-callback";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -33,7 +34,7 @@ const JoinGameForm: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatchType>();
     const [gameId, setGameId] = useState<string>("");
     const [gamePassword, setGamePassword] = useState<string>("");
-    const [error, setError] = useState<{error: boolean, message: string}>({error: false, message: ""});
+    const [error, setError] = useAsyncSetState({error: false, message: ""});
     const handleGameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setError({error: false, message: ""});
         setGameId(event.target.value.toUpperCase());
@@ -48,8 +49,7 @@ const JoinGameForm: React.FC = () => {
             if (res.error !== null) {
                 setError({error: true, message: res.error});
             } else {
-                setError({error: false, message: ""});
-                history.push("/lobby");
+                setError({error: false, message: ""}).then(() => history.push('/lobby'));
             }
         });
     };

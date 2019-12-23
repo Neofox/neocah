@@ -50,7 +50,10 @@ export function signUp(newUser: NewUserType): ThunkType {
             newUser.password
         ).then((res: any) => {
             const userStore: UserType = {
-                name: newUser.name
+                name: newUser.name,
+                currentGame: null,
+                favoriteDecks: [],
+                ready: false
             };
             return firestore.collection('users').doc(res.user.uid).set(userStore)
         }).then(() => {
@@ -61,5 +64,15 @@ export function signUp(newUser: NewUserType): ThunkType {
                 payload: err
             })
         });
+    }
+}
+
+export function putUserInGame(userId: string, game: any): ThunkType<Promise<void>> {
+    return (dispatch, getState, {getFirebase}) => {
+        const firestore = getFirebase().firestore();
+
+        return firestore.collection('users').doc(userId).update({
+            currentGame: game.id
+        })
     }
 }

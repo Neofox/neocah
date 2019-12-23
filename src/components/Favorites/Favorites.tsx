@@ -93,7 +93,7 @@ const Favorites = () => {
         setLoading(true);
         setSuccess(false);
         getDeck(deckId.toUpperCase()).then(deck => {
-            firestore.add('decks', deck).then(() => {
+            firestore.collection('decks').doc(deck.id).set(deck).then(() => {
                 setLoading(false);
                 setSuccess(true);
             })

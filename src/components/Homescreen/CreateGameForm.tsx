@@ -82,9 +82,8 @@ const CreateGameForm: React.FC = () => {
 
     const create = () => {
         const deckList: DeckType[] = decks.filter((deck: DeckType) => deckName.includes(deck.name));
-        //dispatch(testingPromise('hello')).then((res: string) => console.log(res));
-         dispatch(createGame({decks: deckList, maxScore, password})).then(() => {
-             history.push("lobby")
+         dispatch(createGame({decks: deckList, maxScore, password})).then((res) => {
+             history.push('/lobby');
          })
     };
 

@@ -18,13 +18,13 @@ const App: React.FC = () => {
             <CssBaseline/>
             <Router>
                 <Appbar />
-                <Route exact path="/" render={() => <Homescreen/>}/>
-                <Route exact path="/board" render={() => <Board/>}/>
-                <Route exact path="/board-tzar" render={() => <TzarBoard/>}/>
-                <Route exact path="/lobby" render={() => <Lobby/>}/>
-                <Route exact path="/sign-in" render={() => <SignIn/>}/>
-                <Route exact path="/favorites" render={() => <Favorites/>}/>
-                <Route exact path="/sign-up" render={() => <SignUp/>}/>
+                <Route exact path="/" ><Homescreen/></Route>
+                <Route exact path="/board"><Board/></Route>
+                <Route exact path="/board-tzar"><TzarBoard/></Route>
+                <Route exact path="/lobby"><Lobby/></Route>
+                <Route exact path="/sign-in"><SignIn/></Route>
+                <Route exact path="/favorites"><Favorites/></Route>
+                <Route exact path="/sign-up"><SignUp/></Route>
             </Router>
         </ThemeProvider>
     )

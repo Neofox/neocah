@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useHistory, Redirect} from "react-router-dom"
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import CreateGameForm from "./CreateGameForm";
 import GameList from './GameList'
@@ -6,8 +7,10 @@ import JoinGameForm from "./JoinGameForm";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
-import {Redirect} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {GameType} from "../../utils/types";
+import {putUserInGame} from "../../store/system/actions";
+import {ThunkDispatchType} from "../../store/game/types";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,7 +32,22 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Homescreen: React.FC = () => {
     const classes = useStyles();
-    const auth = useSelector((state: any) => state.firebase.auth);
+    //const dispatch = useDispatch<ThunkDispatchType>();
+    //const history = useHistory();
+    const auth = useSelector(({firebase}: any) => firebase.auth);
+    const games = useSelector(({firestore}: any) => firestore.ordered.games);
+
+    useEffect(() => { // Put the user in the game he should have been in
+        const userInGame = games && games.filter((game: GameType) => {
+            return game.players.find((data) => data.id === auth.uid)
+        });
+        if (games && userInGame.length > 0) {
+            // dispatch(putUserInGame(auth.uid, userInGame[0] )).then(() => {
+            //     history.push('/lobby')
+            // })
+        }
+    }, [games, auth.uid]);
+
     if (!auth.uid) {return <Redirect to={"/sign-in"} />}
 
     return (
