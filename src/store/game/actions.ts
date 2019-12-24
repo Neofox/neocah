@@ -8,85 +8,62 @@ import {
     ThunkType,
     JoinGamePayload,
 } from "./types";
-import shortid from "shortid";
+import generate from "nanoid/generate";
 import {GameType} from "../../utils/types";
 
-export function createGame(newGame: CreateGamePayload): ThunkType<Promise<any>> {
-    return (dispatch, getState, {getFirebase}): Promise<boolean> => {
+export const createGame = (newGame: CreateGamePayload): ThunkType<Promise<any>> => {
+    return async (dispatch, getState, {getFirebase}): Promise<any> => {
         const firestore = getFirebase().firestore();
-        const gameId = shortid.generate().toUpperCase();
-        const game: GameType = {id: gameId, ...newGame, players: [], status: "in_lobby"};
-
-        return firestore.collection('games').doc(gameId).set(game)
-            .then(() => {
-                return dispatch(joinGame({gameId: game.id, password: game.password}))
-                    .then(() => {
-                        return game.id
-                    });
-            })
-            .catch((err: any) => {
-                dispatch({
-                    type: GAME_CREATION_ERROR,
-                    payload: err
-                })
-            })
+        try {
+            const gameId = generate('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 5); // ID of 5 chars
+            const game: GameType = {id: gameId, ...newGame, players: [], status: "in_lobby"};
+            await firestore.collection('games').doc(gameId).set(game);
+            return await dispatch(joinGame({gameId: game.id, password: game.password}))
+        } catch (err) {
+            dispatch({type: GAME_CREATION_ERROR, payload: err})
+        }
     }
-}
+};
 
 export function joinGame(joinGame: JoinGamePayload): ThunkType<Promise<any>> {
-    return (dispatch, getState, {getFirebase}): Promise<any> => {
+    return async (dispatch, getState, {getFirebase}): Promise<any> => {
         const firestore = getFirebase().firestore();
         const game: GameType = getState().firestore.data.games[joinGame.gameId];
 
         if (!game || game.password !== joinGame.password) { //TODO: Maybe do that in the cloud
-            const error = "Invalid ID or password";
-            dispatch({
-                type: GAME_JOIN_ERROR,
-                payload: error
-            });
-            return Promise.resolve({error})
-        } else {
-            const userId = getState().firebase.auth.uid;
-            return firestore.collection('users').doc(userId).update({
-                currentGame: joinGame.gameId
-            }).then(() => {
-                dispatch({
-                    type: GAME_JOIN_SUCCESS
-                });
-                return {error: null}
-            });
+            dispatch({type: GAME_JOIN_ERROR, payload: "Invalid ID or password"});
+            return Promise.resolve({error: "Invalid ID or password"})
         }
+
+        const userId = getState().firebase.auth.uid;
+        await firestore.collection('users').doc(userId).update({
+            currentGame: joinGame.gameId
+        });
+        dispatch({type: GAME_JOIN_SUCCESS});
+        return Promise.resolve({error: null})
     }
 }
 
 export function quitGame(): ThunkType<Promise<void>> {
-    return (dispatch, getState, {getFirebase}): Promise<void> => {
+    return async (dispatch, getState, {getFirebase}): Promise<void> => {
         const firestore = getFirebase().firestore();
         const userId = getState().firebase.auth.uid;
 
-        return firestore.collection('users').doc(userId).update({currentGame: null, ready: false})
-            .then(() => {
-                dispatch({type: QUIT_GAME})
-            });
+        await firestore.collection('users').doc(userId).update({currentGame: null, ready: false});
+        dispatch({type: QUIT_GAME});
     }
 }
 
 export function toggleReady(): ThunkType<void> {
-    return (dispatch, getState, {getFirebase}): Promise<any> => {
+    return async (dispatch, getState, {getFirebase}): Promise<any> => {
         const firestore = getFirebase().firestore();
         const userId = getState().firebase.auth.uid;
 
-        return firestore.collection('users').doc(userId).get()
-            .then((userSnap: any) => {
-                    const newReady = !userSnap.get('ready');
-                    return firestore.collection('users').doc(userId).update({
-                        ready: newReady
-                    })
-                }
-            ).then(() => {
-                dispatch({
-                    type: TOGGLE_READY
-                });
-            });
+        const userSnapshot = await firestore.collection('users').doc(userId).get();
+        const newReady = !userSnapshot.get('ready');
+        await firestore.collection('users').doc(userId).update({
+            ready: newReady
+        });
+        dispatch({type: TOGGLE_READY});
     }
 }

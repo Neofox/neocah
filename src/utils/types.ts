@@ -41,5 +41,5 @@ export interface UserType {
     name: string,
     ready: boolean,
     currentGame: null | string,
-    favoriteDecks: null | DeckType[]
+    favoriteDecks: DeckType[]
 }

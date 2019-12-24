@@ -10,64 +10,49 @@ import {
 } from "./types";
 import {UserType} from "../../utils/types";
 
-export function signIn(credentials: CredentialsType): ThunkType {
-    return (dispatch, getState, {getFirebase}) => {
+export const signIn = (credentials: CredentialsType): ThunkType => {
+    return async (dispatch, getState, {getFirebase}) => {
         const firebase = getFirebase();
-        firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password)
-            .then(() => {
-                dispatch({
-                    type: SIGNIN_SUCCESS,
-                })
-            })
-            .catch((err: any) => {
-                dispatch({
-                    type: SIGNIN_ERROR,
-                    payload: err
-                })
-            });
-        return;
+        try {
+            await firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password);
+            dispatch({type: SIGNIN_SUCCESS,})
+        } catch(err) {
+            dispatch({type: SIGNIN_ERROR, payload: err})
+        }
     }
-
-}
+};
 
 export function signOut(): ThunkType {
-    return (dispatch, getState, {getFirebase}) => {
+    return async (dispatch, getState, {getFirebase}) => {
         const firebase = getFirebase();
-        firebase.auth().signOut().then(() => {
-            dispatch({
-                type: SIGNOUT_SUCCESS
-            })
-        });
+        await firebase.logout(); //await firebase.auth().signOut();
+        dispatch({
+            type: SIGNOUT_SUCCESS
+        })
     }
-}
+};
 
-export function signUp(newUser: NewUserType): ThunkType {
-    return (dispatch, getState, {getFirebase}) => {
+export const signUp = (newUser: NewUserType): ThunkType => {
+    return async (dispatch, getState, {getFirebase}) => {
         const firebase = getFirebase();
         const firestore = getFirebase().firestore();
-        firebase.auth().createUserWithEmailAndPassword(
-            newUser.email,
-            newUser.password
-        ).then((res: any) => {
+        try {
+            const res = await firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
             const userStore: UserType = {
                 name: newUser.name,
                 currentGame: null,
                 favoriteDecks: [],
                 ready: false
             };
-            return firestore.collection('users').doc(res.user.uid).set(userStore)
-        }).then(() => {
+            await firestore.collection('users').doc(res.user.uid).set(userStore);
             dispatch({type: SIGNUP_SUCCESS})
-        }).catch((err: any) => {
-            dispatch({
-                type: SIGNUP_ERROR,
-                payload: err
-            })
-        });
+        } catch (err) {
+            dispatch({type: SIGNUP_ERROR, payload: err})
+        }
     }
-}
+};
 
-export function putUserInGame(userId: string, game: any): ThunkType<Promise<void>> {
+export const putUserInGame =  (userId: string, game: any): ThunkType<Promise<void>> => {
     return (dispatch, getState, {getFirebase}) => {
         const firestore = getFirebase().firestore();
 
@@ -75,4 +60,4 @@ export function putUserInGame(userId: string, game: any): ThunkType<Promise<void
             currentGame: game.id
         })
     }
-}
+};

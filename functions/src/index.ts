@@ -13,7 +13,7 @@ export const gameManagement = functions.firestore
         const game = doc.after.data();
         const previousGame = doc.before.data();
 
-        if (game && previousGame && game.players === previousGame.players) return null;
+        if (game && previousGame && game.players === previousGame.players) return;
 
         const isAllPlayerReady = game && game.players.reduce((acc: boolean, curr: PlayerType) => {
             return !curr.ready ? false : acc
@@ -25,7 +25,7 @@ export const gameManagement = functions.firestore
             })
         }
 
-        return null;
+        return;
     });
 
 export const updateUserGame = functions.firestore
@@ -39,14 +39,14 @@ export const updateUserGame = functions.firestore
             return toggleReady(userId, user);
         }
 
-        if (user === undefined || (previousUser && user.currentGame === previousUser.currentGame)) return null;
+        if (user === undefined || (previousUser && user.currentGame === previousUser.currentGame)) return;
 
         if (user && user.currentGame !== null) {
             return addPlayerToGame(userId, user);
         } else if (user && user.currentGame === null) {
             return removePlayerFromGame(userId, previousUser);
         }
-        return null;
+        return;
     });
 
 const removePlayerFromGame = (userId: string, user: any) => {

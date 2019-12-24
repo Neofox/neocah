@@ -62,7 +62,7 @@ const Lobby: React.FC = () => {
     const handleReady = () => dispatch(toggleReady());
 
     if (!auth.uid) {return <Redirect to={"/sign-in"} />}
-    if (game.status === 'in_progress') {return <Redirect to={"/board"}/>}
+    if (game && game.status === 'in_progress') {return <Redirect to={"/board"}/>}
 
     return (
         <Container className={classes.root}>
