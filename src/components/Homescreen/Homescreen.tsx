@@ -34,6 +34,7 @@ const Homescreen: React.FC = () => {
     const classes = useStyles();
     //const dispatch = useDispatch<ThunkDispatchType>();
     //const history = useHistory();
+    const user = useSelector(({firebase}: any) => firebase.profile);
     const auth = useSelector(({firebase}: any) => firebase.auth);
     const games = useSelector(({firestore}: any) => firestore.ordered.games);
 
@@ -48,6 +49,7 @@ const Homescreen: React.FC = () => {
         }
     }, [games, auth.uid]);
 
+    if (user.isLoaded && user.currentGame !== null) {return <Redirect to={"/lobby"}/>}
     if (!auth.uid) {return <Redirect to={"/sign-in"} />}
 
     return (

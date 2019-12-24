@@ -6,20 +6,40 @@ admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
 
+export const gameManagement = functions.firestore
+    .document('games/{gameId}')
+    .onUpdate(doc => {
+        const gameId = doc.after.id;
+        const game = doc.after.data();
+        const previousGame = doc.before.data();
+
+        if (game && previousGame && game.players === previousGame.players) return null;
+
+        const isAllPlayerReady = game && game.players.reduce((acc: boolean, curr: PlayerType) => {
+            return !curr.ready ? false : acc
+        }, true);
+
+        if (isAllPlayerReady && game && game.status === 'in_lobby') {
+            return db.collection('games').doc(gameId).update({
+                status: 'in_progress'
+            })
+        }
+
+        return null;
+    });
+
 export const updateUserGame = functions.firestore
     .document('users/{userId}')
-    .onUpdate((doc) => {
+    .onUpdate(doc => {
         const userId = doc.after.id;
         const user = doc.after.data();
         const previousUser = doc.before.data();
 
-        if (user && previousUser && user.ready !== previousUser.ready) {
+        if (user && previousUser && user.ready !== previousUser.ready && user.currentGame !== null) {
             return toggleReady(userId, user);
         }
 
-        if (user === undefined || (previousUser && user.currentGame === previousUser.currentGame)) {
-            return null;
-        }
+        if (user === undefined || (previousUser && user.currentGame === previousUser.currentGame)) return null;
 
         if (user && user.currentGame !== null) {
             return addPlayerToGame(userId, user);
