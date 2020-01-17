@@ -7,9 +7,16 @@ import BlackCardDisplay from "./BlackCardDisplay";
 import PlayerScore from "./PlayerScore";
 import {useSelector} from "react-redux";
 import {Redirect} from "react-router-dom";
+import {useFirestoreConnect} from "react-redux-firebase";
 
 const Board: React.FC = () => {
-    const auth = useSelector((state: any) => state.firebase.auth);
+    const auth = useSelector(({firebase}: any) => firebase.auth);
+    const user = useSelector(({firebase}: any) => firebase.profile);
+
+    useFirestoreConnect([
+        {collection: 'games', doc: user.currentGame}
+    ]);
+
     if (!auth.uid) {return <Redirect to={"/sign-in"} />}
 
     return (

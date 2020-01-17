@@ -34,7 +34,9 @@ export interface PlayerType {
     id: string,
     name: string,
     ready: boolean,
-    score: number
+    score: number,
+    cards: CardType[],
+    isTzar: boolean
 }
 
 export interface UserType {
